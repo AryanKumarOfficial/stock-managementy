@@ -5,18 +5,16 @@ export async function GET(request) {
 
 
     // Replace the uri string with your connection string.
-    const uri = "mongodb+srv://stock-database:stocker%E2%82%B93000@cluster0.79fi7kj.mongodb.net/stock";
+    const uri = process.env.MONGO_URI;
 
     const client = new MongoClient(uri);
 
     const database = client.db('stock');
-    const movies = database.collection('inventory');
+    const inventory = database.collection('inventory');
 
     // Query for a movie that has the title 'Back to the Future'
-    const query = {};
-    const movie = await movies.find().toArray();
+    const products = await inventory.find().toArray();
 
-    console.log(movie);
-    return NextResponse.json({ "hello": "world", movie })
+    return NextResponse.json({ success: true, products })
 
 }
