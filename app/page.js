@@ -1,11 +1,26 @@
 "use client";
-import Header from '@/components/Header'
-import { useState } from 'react';
+import Header from '@/components/Header';
+import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function Home() {
   // Sample stock data
   const [productForm, setProductForm] = useState({});
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/products');
+        const data = await res.json();
+        setProducts(data.allProducts);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getProducts();
+  }, []);
+
 
   const handleInputChange = (e) => {
     setProductForm({ ...productForm, [e.target.name]: e.target.value });
@@ -41,7 +56,7 @@ export default function Home() {
         position="top-center"
         reverseOrder={true}
       />
-      <div className="container mx-auto px-4 py-8 bg-green-50">
+      <div className="container mx-auto px-4 py-8 mt-8 bg-green-50">
         <h1 className="text-3xl mb-4 font-bold">Search a Product</h1>
         <div className="flex mb-4">
           <input
@@ -71,10 +86,10 @@ export default function Home() {
               type="text"
               id="productName"
               name="name"
-              value={productForm.name}
+              value={productForm?.name}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded"
-              requigreen
+              required
             />
           </div>
           <div className="mb-4">
@@ -85,10 +100,10 @@ export default function Home() {
               type="number"
               id="productQuantity"
               name="quantity"
-              value={productForm.quantity}
+              value={productForm?.quantity}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded"
-              requigreen
+              required
             />
           </div>
           <div className="mb-4">
@@ -99,10 +114,10 @@ export default function Home() {
               type="text"
               id="productId"
               name="price"
-              value={productForm.price}
+              value={productForm?.price}
               onChange={handleInputChange}
               className="w-full p-2 border border-gray-300 rounded"
-              requigreen
+              required
             />
           </div>
           <button
@@ -117,7 +132,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 my-6 bg-green-50">
 
         <h1 className="text-3xl mb-4 font-bold">My Current Stock</h1>
-        <table className="min-w-full border border-gray-200">
+        {products ? <table className="min-w-full border border-gray-200">
           <thead>
             <tr>
               <th className="py-2 px-4 bg-gray-100">ID</th>
@@ -127,16 +142,17 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {/* {stock.map((item) => (
-              <tr key={item.id} className="border-b border-gray-200 text-center">
-                <td className="py-2 px-4">{item.id}</td>
+            {products.map((item, index) => (
+              <tr key={index} className="border-b border-gray-200 text-center">
+                <td className="py-2 px-4">{item._id}</td>
                 <td className="py-2 px-4">{item.name}</td>
                 <td className="py-2 px-4">{item.quantity}</td>
                 <td className="py-2 px-4">{item.price}</td>
               </tr>
-            ))} */}
+            ))}
           </tbody>
-        </table>
+        </table> : <h1 className="text-xl text-center font-bold">"No data found"</h1>}
+
       </div>
     </>
   );
